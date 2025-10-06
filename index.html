@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyPulse | Next-Gen Weather</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Add these to your head section -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-900 text-white overflow-x-hidden">
+    <!-- Animated Background -->
+    <div id="weather-background" class="fixed inset-0 -z-10 transition-all duration-1000"></div>
+    
+    <!-- Particle System -->
+    <canvas id="particle-canvas" class="fixed inset-0 -z-10"></canvas>
+    
+    <!-- Main Layout -->
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-12">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center">
+                    <i class="fas fa-bolt text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">SkyPulse</h1>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="relative w-1/3">
+                <input type="text" id="search-input" placeholder="Search city..." 
+                    class="w-full bg-black/30 backdrop-blur-md border border-cyan-500/50 rounded-full py-3 px-6 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-300">
+                <button id="search-btn" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-cyan-500 hover:bg-cyan-400 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <!-- Sound Toggle -->
+            <button id="sound-toggle" class="bg-black/30 backdrop-blur-md border border-cyan-500/50 rounded-full w-12 h-12 flex items-center justify-center hover:bg-cyan-500/20 transition-all duration-300">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+        </header>
+        
+        <!-- Main Dashboard -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Current Weather Panel -->
+            <div class="lg:col-span-2 bg-black/30 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl transition-all duration-500 hover:shadow-cyan-500/10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-2xl font-semibold mb-2" id="current-city">New York</h2>
+                        <p class="text-gray-400" id="current-date">Monday, October 16</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-5xl font-bold mb-2" id="current-temp">22°</p>
+                        <p class="text-gray-300" id="current-condition">Sunny</p>
+                    </div>
+                </div>
+                
+                <!-- Weather Icon -->
+                <div class="flex justify-center my-8">
+                    <div id="weather-icon" class="w-40 h-40 flex items-center justify-center">
+                        <i class="fas fa-sun text-6xl text-yellow-400"></i>
+                    </div>
+                </div>
+                
+                <!-- Weather Details -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    <div class="bg-black/20 backdrop-blur-md rounded-xl p-4 text-center border border-white/5">
+                        <p class="text-gray-400">Feels Like</p>
+                        <p class="text-xl font-semibold" id="feels-like">24°</p>
+                    </div>
+                    <div class="bg-black/20 backdrop-blur-md rounded-xl p-4 text-center border border-white/5">
+                        <p class="text-gray-400">Humidity</p>
+                        <p class="text-xl font-semibold" id="humidity">65%</p>
+                    </div>
+                    <div class="bg-black/20 backdrop-blur-md rounded-xl p-4 text-center border border-white/5">
+                        <p class="text-gray-400">Wind</p>
+                        <p class="text-xl font-semibold" id="wind-speed">12 km/h</p>
+                    </div>
+                    <div class="bg-black/20 backdrop-blur-md rounded-xl p-4 text-center border border-white/5">
+                        <p class="text-gray-400">Pressure</p>
+                        <p class="text-xl font-semibold" id="pressure">1015 hPa</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3D Globe Container -->
+            <div class="bg-black/30 backdrop-blur-xl rounded-2xl border border-white/10 p-4 overflow-hidden">
+                <h3 class="text-xl font-semibold mb-4 text-center">Global Weather</h3>
+                <div id="globe-container" class="h-96 rounded-xl overflow-hidden"></div>
+            </div>
+        </main>
+        
+        <!-- Hourly Forecast -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">Hourly Forecast</h2>
+            <div id="hourly-forecast" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4">
+                <!-- Hourly cards will be dynamically generated -->
+            </div>
+        </section>
+        
+        <!-- Weekly Forecast -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-6">7-Day Forecast</h2>
+            <div id="weekly-forecast" class="grid grid-cols-1 md:grid-cols-7 gap-4">
+                <!-- Weekly cards will be dynamically generated -->
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-black/30 backdrop-blur-xl border-t border-white/10 py-6 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-400">
+            <p>SkyPulse &copy; 2023 - Next Generation Weather Visualization</p>
+        </div>
+    </footer>
+
+    <script src="js/weather-effects.js"></script>
+    <script src="js/three-globe.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
