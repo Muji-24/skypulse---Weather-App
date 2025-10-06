@@ -1,20 +1,18 @@
 {
-  "name": "skypulse",
+  "name": "skypulse-weather",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A futuristic, interactive weather dashboard",
+  "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "build": "echo 'No build process needed'",
+    "install-deps": "cd server && npm install"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Muji-24/skypulse---Weather-App.git"
+  "engines": {
+    "node": ">=18.0.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Muji-24/skypulse---Weather-App/issues"
-  },
-  "homepage": "https://github.com/Muji-24/skypulse---Weather-App#readme"
+  "keywords": ["weather", "dashboard", "3d", "interactive"],
+  "author": "Your Name",
+  "license": "MIT"
 }
